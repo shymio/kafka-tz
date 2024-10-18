@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package coffee;
+
+option java_package = "api.kafkatz.grpc";
+option java_outer_classname = "RoastingProto";
+
+message RoastingInfo {
+  string country = 1;
+  string type = 2;
+  int32 inputWeight = 3;
+  int32 outputWeight = 4;
+  string brigadeId = 5;
+}
+
+message Empty {}
+
+service RoastingService {
+  rpc SendRoastingInfo(RoastingInfo) returns (Empty);
+}
