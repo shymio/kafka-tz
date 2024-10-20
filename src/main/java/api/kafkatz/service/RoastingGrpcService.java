@@ -19,7 +19,6 @@ public class RoastingGrpcService extends RoastingServiceGrpc.RoastingServiceImpl
     @Override
     public void sendRoastingInfo(RoastingProto.RoastingInfo request, StreamObserver<RoastingProto.Empty> responseObserver) {
 
-        // Логика обработки информации об обжарке
         RoastingRecord record = RoastingRecord.builder()
                 .brigadeId(UUID.fromString(request.getBrigadeId()))
                 .country(request.getCountry())
@@ -28,13 +27,11 @@ public class RoastingGrpcService extends RoastingServiceGrpc.RoastingServiceImpl
                 .outputWeight(request.getOutputWeight())
                 .build();
 
-        // Расчет процента потерь
         double lossPercent = ((double) (request.getInputWeight() - request.getOutputWeight()) / request.getInputWeight()) * 100;
         record.setLossPercent(lossPercent);
 
         roastingRecordRepository.save(record);
 
-        // Ответ клиенту
         responseObserver.onNext(RoastingProto.Empty.newBuilder().build());
         responseObserver.onCompleted();
     }

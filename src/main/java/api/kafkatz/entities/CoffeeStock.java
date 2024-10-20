@@ -20,4 +20,6 @@ public class CoffeeStock {
     private int arabicaPercent;
     private String type;
     private double weightInGrams;
+
+
 }
