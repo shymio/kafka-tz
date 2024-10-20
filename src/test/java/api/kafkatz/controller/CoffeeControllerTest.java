@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -81,34 +83,34 @@ public class CoffeeControllerTest {
     }
 
     @Test
-    public void testUpdateStock() {
-        CoffeeStock existingStock = CoffeeStock.builder()
-                .id(1L)
-                .country("Brazil")
-                .robustaPercent(20)
-                .arabicaPercent(80)
-                .type("Arabica")
-                .weightInGrams(1000)
-                .build();
+    void testUpdateStock() {
+        // Подготовка данных
+        Long stockId = 1L; // предположим, что остаток с таким ID существует
+        CoffeeStock existingStock = new CoffeeStock();
+        existingStock.setId(stockId);
+        existingStock.setCountry("Old Country");
+        existingStock.setType("Old Type");
 
-        when(coffeeStockRepository.findById(1L)).thenReturn(Optional.of(existingStock));
-        when(coffeeStockRepository.save(any(CoffeeStock.class))).thenReturn(existingStock);
+        // Имитация поведения репозитория
+        when(coffeeStockRepository.findById(stockId)).thenReturn(Optional.of(existingStock));
 
-        CoffeeStock updatedStock = CoffeeStock.builder()
-                .country("Colombia")
-                .robustaPercent(10)
-                .arabicaPercent(90)
-                .type("Arabica")
-                .weightInGrams(1500)
-                .build();
+        CoffeeStock updatedStockData = new CoffeeStock();
+        updatedStockData.setCountry("New Country");
+        updatedStockData.setType("New Type");
 
-        ResponseEntity<CoffeeStock> response = coffeeController.updateStock(1L, updatedStock);
+        // Вызов метода обновления
+        ResponseEntity<CoffeeStock> response = coffeeController.updateStock(stockId, updatedStockData);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().getCountry()).isEqualTo("Colombia");
-        assertThat(response.getBody().getRobustaPercent()).isEqualTo(10);
-        assertThat(response.getBody().getWeightInGrams()).isEqualTo(1500);
+        // Проверка результата
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("New Country", response.getBody().getCountry());
+        assertEquals("New Type", response.getBody().getType());
+
+        // Убедитесь, что save() был вызван
+        verify(coffeeStockRepository).save(existingStock);
     }
+
 
     @Test
     public void testUpdateStockNotFound() {
