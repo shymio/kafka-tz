@@ -1,6 +1,5 @@
 package api.kafkatz.entities;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 
